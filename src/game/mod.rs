@@ -17,3 +17,6 @@ pub use item::*;
 
 pub mod input_pipes;
 pub use input_pipes::*;
+
+pub mod draw;
+pub use draw::*;
