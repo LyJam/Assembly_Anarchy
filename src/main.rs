@@ -29,9 +29,12 @@ fn main() {
         .insert_resource(MouseWorldPosition(None))
         .insert_resource(LeftMouseClickPosition(None))
         .insert_resource(JustClicked(None))
+        .insert_resource(LevelRegistry::default())
+        .insert_resource(CurrentLevel(0))
+        .add_event::<LevelCompleted>()
         .add_observer(on_add_view)
         .add_observer(on_add_output_pipe)
-        .add_systems(Startup, (setup, load_level))
+        .add_systems(Startup, (setup_camera, load_initial_level))
         .add_systems(
             Update,
             (
@@ -50,6 +53,8 @@ fn main() {
                 output_pipe_consume_item,
                 draw_obstacle,
                 remove_escaped_items,
+                load_next_level,
+                simulate_level_completion,
             ),
         )
         .add_systems(
@@ -64,6 +69,6 @@ fn main() {
         .run();
 }
 
-fn setup(asset_server: Res<AssetServer>, mut commands: Commands) {
+fn setup_camera(mut commands: Commands) {
     commands.spawn((Camera2d));
 }
