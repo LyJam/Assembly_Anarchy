@@ -1,1 +1,4 @@
 /target
+*.zip
+web/Assembly_Anarchy.js
+web/Assembly_Anarchy_bg.wasm
