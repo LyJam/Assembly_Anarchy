@@ -30,6 +30,7 @@ fn main() {
         .insert_resource(LeftMouseClickPosition(None))
         .insert_resource(JustClicked(None))
         .add_observer(on_add_view)
+        .add_observer(on_add_output_pipe)
         .add_systems(Startup, (setup, load_level))
         .add_systems(
             Update,
@@ -42,7 +43,15 @@ fn main() {
             )
                 .chain(),
         )
-        .add_systems(Update, (spawn_item, draw_obstacle, remove_escaped_items))
+        .add_systems(
+            Update,
+            (
+                input_pipe_spawn_item,
+                output_pipe_consume_item,
+                draw_obstacle,
+                remove_escaped_items,
+            ),
+        )
         .add_systems(
             Update,
             (

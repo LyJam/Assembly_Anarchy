@@ -17,6 +17,12 @@ pub fn load_level(mut commands: Commands) {
     commands.spawn((SpriteView::InputPipe, Position(INPUT_PIPE_POS5), Clickable));
 
     commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe { item: Item::Bolt },
+        Position(OUTPUT_PIPE_POS3),
+    ));
+
+    commands.spawn((
         SpriteView::BackgroundIndustry,
         Position(Vec2 { x: 0.0, y: 0.0 }),
     ));

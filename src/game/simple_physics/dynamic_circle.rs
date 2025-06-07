@@ -1,7 +1,7 @@
 use crate::game::*;
 use bevy::prelude::*;
 
-const RESTITUTION: f32 = 0.7; // Coefficient of restitution: 0.0 (perfectly inelastic) to 1.0 (perfectly elastic)
+const RESTITUTION: f32 = 0.6; // Coefficient of restitution: 0.0 (perfectly inelastic) to 1.0 (perfectly elastic)
 
 pub fn collision_with_static_circles(
     mut dynamic_circles_query: Query<(&mut Position, &mut Velocity, &CirclePhysics)>,

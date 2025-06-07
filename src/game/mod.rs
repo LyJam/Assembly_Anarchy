@@ -15,8 +15,8 @@ pub use input::*;
 pub mod item;
 pub use item::*;
 
-pub mod input_pipes;
-pub use input_pipes::*;
+pub mod pipes;
+pub use pipes::*;
 
 pub mod draw;
 pub use draw::*;

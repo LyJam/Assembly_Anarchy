@@ -5,6 +5,7 @@ use bevy::sprite::Anchor;
 #[derive(Component)]
 pub enum SpriteView {
     InputPipe,
+    OutputPipe,
     BackgroundIndustry,
     Item { item: Item },
 }
@@ -13,6 +14,7 @@ impl SpriteView {
     pub fn get_sprite(&self) -> &'static str {
         match self {
             SpriteView::InputPipe => "input_pipe.png",
+            SpriteView::OutputPipe => "output_pipe.png",
             SpriteView::BackgroundIndustry => "Backgrounds/industry.png",
             SpriteView::Item { item } => item.get_sprite(),
         }
@@ -21,6 +23,7 @@ impl SpriteView {
     pub fn get_name(&self) -> &'static str {
         match self {
             SpriteView::InputPipe => "pipe",
+            SpriteView::OutputPipe => "pipe",
             SpriteView::BackgroundIndustry => "Background",
             SpriteView::Item { item } => item.get_name(),
         }
@@ -29,6 +32,7 @@ impl SpriteView {
     pub fn get_scale(&self) -> Vec2 {
         match self {
             SpriteView::InputPipe => Vec2::new(200.0, 200.0),
+            SpriteView::OutputPipe => Vec2::new(200.0, 200.0),
             SpriteView::BackgroundIndustry => Vec2::new(1600.0, 900.0),
             SpriteView::Item { item: _ } => Vec2::new(32.0, 32.0),
         }
@@ -37,6 +41,7 @@ impl SpriteView {
     pub fn get_layer(&self) -> f32 {
         match self {
             SpriteView::InputPipe => 10.,
+            SpriteView::OutputPipe => 10.,
             SpriteView::BackgroundIndustry => -10.,
             SpriteView::Item { item: _ } => 0.,
         }
