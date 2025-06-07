@@ -20,6 +20,7 @@ pub struct InputPipe {
     pub item: Item,
     pub spawn_rate: f32, // spawns per second
     pub time_elapsed: f32,
+    pub enabled: bool,
 }
 
 #[derive(Component)]
@@ -99,12 +100,29 @@ pub fn output_pipe_consume_item(
     }
 }
 
+pub fn toggle_input_pipe(
+    clicked_resource: Res<JustClicked>,
+    mut pipes: Query<(Entity, &mut InputPipe)>,
+) {
+    for (pipe_entity, mut pipe) in pipes.iter_mut() {
+        if let Some(clicked_entity) = clicked_resource.0 {
+            if (clicked_entity == pipe_entity) {
+                pipe.enabled = !pipe.enabled;
+            }
+        }
+    }
+}
+
 pub fn input_pipe_spawn_item(
     mut commands: Commands,
     mut pipes: Query<(Entity, &mut InputPipe, &Position)>,
     time: Res<Time>,
 ) {
     for (pipe_entity, mut input_pipe, pipe_position) in pipes.iter_mut() {
+        if (!input_pipe.enabled) {
+            return;
+        }
+
         input_pipe.time_elapsed += time.delta_secs();
 
         // Calculate the interval between spawns. Avoid division by zero if spawn_rate is 0.

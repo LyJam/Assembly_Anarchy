@@ -94,6 +94,7 @@ pub fn load_level_1(mut commands: Commands) {
             item: Item::Bolt,
             spawn_rate: 5.,
             time_elapsed: 0.,
+            enabled: false,
         },
     ));
     commands.spawn((SpriteView::InputPipe, Position(INPUT_PIPE_POS2), Clickable));

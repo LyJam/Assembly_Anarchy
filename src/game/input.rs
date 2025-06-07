@@ -1,5 +1,11 @@
+use std::process::CommandArgs;
+
 use crate::game::*;
-use bevy::window::{PrimaryWindow, Window};
+use bevy::winit::cursor::CursorIcon;
+use bevy::{
+    state::commands,
+    window::{PrimaryWindow, SystemCursorIcon, Window},
+};
 
 #[derive(Resource)]
 pub struct MouseWorldPosition(pub Option<Position>);
@@ -46,13 +52,24 @@ pub fn update_left_mouse_click_position(
 
 pub fn update_just_clicked(
     left_mouse_click_pos: Res<LeftMouseClickPosition>,
+    mouse_pos: Res<MouseWorldPosition>,
     mut just_clicked: ResMut<JustClicked>,
     views: Query<(Entity, &SpriteView, &Position), With<Clickable>>,
+    mut windows: Query<Entity, With<PrimaryWindow>>,
+    mut commands: Commands,
 ) {
+    let Some(mut primary_window) = windows.iter_mut().next() else {
+        return;
+    };
+
+    // re-set default cursor
+    commands
+        .entity(primary_window)
+        .insert((CursorIcon::System(SystemCursorIcon::default())));
+
     just_clicked.0 = None;
 
-    // If there was no left mouse click this frame, we have nothing to do.
-    let Some(click_world_pos) = left_mouse_click_pos.0 else {
+    let Some(mouse_world_pos) = mouse_pos.0 else {
         return;
     };
 
@@ -73,9 +90,15 @@ pub fn update_just_clicked(
         let bounding_box = Rect::new(min_x, min_y, max_x, max_y);
 
         // Check if the click position is within the bounding box.
-        if bounding_box.contains(click_world_pos.0) {
-            just_clicked.0 = Some(entity);
-            info!("Entity {:?} was just clicked!", entity);
+        if bounding_box.contains(mouse_world_pos.0) {
+            // set pointer cursor to indicate that this object is clickable
+            commands
+                .entity(primary_window)
+                .insert((CursorIcon::System(SystemCursorIcon::Pointer)));
+            if let Some(click_world_pos) = left_mouse_click_pos.0 {
+                just_clicked.0 = Some(entity);
+                info!("Entity {:?} was just clicked!", entity);
+            };
             return; // Exit the function as we found the clicked entity.
         }
     }

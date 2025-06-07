@@ -49,6 +49,7 @@ fn main() {
         .add_systems(
             Update,
             (
+                toggle_input_pipe,
                 input_pipe_spawn_item,
                 output_pipe_consume_item,
                 draw_obstacle,
