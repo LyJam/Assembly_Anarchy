@@ -42,7 +42,7 @@ fn main() {
             )
                 .chain(),
         )
-        .add_systems(Update, (spawn_item, draw_obstacle))
+        .add_systems(Update, (spawn_item, draw_obstacle, remove_escaped_items))
         .add_systems(
             Update,
             (

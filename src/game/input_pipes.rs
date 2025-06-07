@@ -1,4 +1,5 @@
 use crate::game::*;
+use rand::Rng;
 
 pub const INPUT_PIPE_POS1: Vec2 = Vec2::new(-600., 350.);
 pub const INPUT_PIPE_POS2: Vec2 = Vec2::new(-300., 350.);
@@ -30,14 +31,21 @@ pub fn spawn_item(
 
         // Check if enough time has elapsed to spawn an item.
         while input_pipe.time_elapsed >= spawn_interval {
-            // Spawn the item. We clone the item from the InputPipe so the new entity has its own data.
+            let mut rng = rand::rng();
+            let random_velocity_x = rng.random_range(-50.0..50.0);
             commands.spawn((
                 SpriteView::Item {
                     item: input_pipe.item.clone(),
                 },
-                *pipe_position,
+                Position(Vec2 {
+                    x: pipe_position.0.x,
+                    y: pipe_position.0.y + 40.0,
+                }),
                 CirclePhysics { radius: 16.0 },
-                Velocity(Vec2 { x: 0., y: 0. }),
+                Velocity(Vec2 {
+                    x: random_velocity_x,
+                    y: 0.,
+                }),
             ));
 
             // Subtract the spawn interval from time_elapsed. This is crucial for accuracy.
