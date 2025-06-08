@@ -23,6 +23,10 @@ impl Default for LevelRegistry {
             1u32,
             load_level_1 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
         );
+        map.insert(
+            2u32,
+            load_level_2 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
+        );
         LevelRegistry(map)
     }
 }
@@ -334,6 +338,55 @@ pub fn load_level_1(
         Position(Vec2 {
             x: INPUT_PIPE_POS3.x + 125.,
             y: INPUT_PIPE_POS3.y,
+        }),
+    ));
+}
+
+pub fn load_level_2(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 100;
+    money_goal.0 = 120;
+
+    setup_mouse_button(commands.reborrow());
+    setup_draw_button(commands.reborrow());
+
+    commands.spawn((
+        SpriteView::InputPipe,
+        Position(INPUT_PIPE_POS3),
+        Clickable,
+        InputPipe {
+            item: Item::Bolt,
+            spawn_rate: 5.,
+            time_elapsed: 0.,
+            enabled: false,
+            cost: 1,
+        },
+    ));
+
+    commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe {
+            item: Item::Bolt,
+            reward: 5,
+        },
+        Position(OUTPUT_PIPE_POS5),
+    ));
+
+    commands.spawn((
+        SpriteView::BackgroundIndustry2,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+
+    // user click indicator (mini tutorial)
+    commands.spawn((
+        SpriteView::CursorPointLeft,
+        Position(Vec2 {
+            x: BUTTON_DRAW_POS.x + 100.,
+            y: BUTTON_DRAW_POS.y,
         }),
     ));
 }
