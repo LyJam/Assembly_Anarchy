@@ -96,10 +96,11 @@ pub fn on_add_output_pipe(
                 x: 0.56 * half_diameter + pos.0.x,
                 y: -0.50 * half_diameter + pos.0.y,
             }),
-            RectanglePhysics {
+            ColliderCollection(vec![RectanglePhysics {
                 width: 0.2 * half_diameter,
                 height: 1.0 * half_diameter,
-            },
+                ..Default::default()
+            }]),
         ));
         //left side
         commands.spawn((
@@ -113,10 +114,11 @@ pub fn on_add_output_pipe(
                 x: -0.56 * half_diameter + pos.0.x,
                 y: -0.50 * half_diameter + pos.0.y,
             }),
-            RectanglePhysics {
+            ColliderCollection(vec![RectanglePhysics {
                 width: 0.2 * half_diameter,
                 height: 1.0 * half_diameter,
-            },
+                ..Default::default()
+            }]),
         ));
 
         // add the item icon

@@ -16,11 +16,65 @@ pub struct LeftMouseClickPosition(pub Option<Position>);
 #[derive(Component)]
 pub struct Clickable;
 
+// Dragable objects also need the Clickable component!
+#[derive(Component)]
+pub struct DragAble;
+
+#[derive(Resource)]
+pub struct Dragging {
+    pub entity: Option<Entity>,
+    pub offset_pos: Option<Position>,
+}
+
 #[derive(Resource)]
 pub struct JustClicked(pub Option<Entity>);
 
 #[derive(Resource)]
 pub struct OverClickableElement(pub Option<Entity>);
+
+pub fn update_dragged_object(
+    dragging: Res<Dragging>,
+    mouse_pos: Res<MouseWorldPosition>,
+    mut objects: Query<(&mut Position)>,
+) {
+    if let Some(dragging_entity) = dragging.entity {
+        if let Ok(mut target) = objects.get_mut(dragging_entity) {
+            if let Some(dragging_offset) = dragging.offset_pos {
+                if let Some(mouse_position) = mouse_pos.0 {
+                    target.0 = Vec2::new(
+                        mouse_position.0.x + dragging_offset.0.x,
+                        mouse_position.0.y + dragging_offset.0.y,
+                    );
+                }
+            }
+        }
+    }
+}
+
+pub fn reset_dragging(mut dragging: ResMut<Dragging>, buttons: Res<ButtonInput<MouseButton>>) {
+    if (!buttons.pressed(MouseButton::Left)) {
+        dragging.entity = None;
+        dragging.offset_pos = None;
+    }
+}
+
+pub fn set_dragging(
+    mut dragging: ResMut<Dragging>,
+    just_clicked: Res<JustClicked>,
+    mut objects: Query<(Entity, &Position), With<DragAble>>,
+    mouse_pos: Res<MouseWorldPosition>,
+) {
+    if (dragging.entity == None) {
+        if let Some(clicked_entity) = just_clicked.0 {
+            if let Some(mouse_pos) = mouse_pos.0 {
+                if let Ok((entity, pos)) = objects.get(clicked_entity) {
+                    dragging.entity = Some(entity);
+                    dragging.offset_pos = Some(Position(pos.0 - mouse_pos.0));
+                }
+            }
+        }
+    }
+}
 
 pub fn update_mouse_world_position(
     windows: Query<&Window, With<PrimaryWindow>>,

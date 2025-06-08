@@ -8,9 +8,25 @@ pub struct CirclePhysics {
 }
 
 #[derive(Component)]
+pub struct ColliderCollection(pub Vec<RectanglePhysics>);
+
+#[derive(Component)]
 pub struct RectanglePhysics {
     pub width: f32,
     pub height: f32,
+    pub offset_x: f32,
+    pub offset_y: f32,
+}
+
+impl Default for RectanglePhysics {
+    fn default() -> Self {
+        RectanglePhysics {
+            width: 10.0,
+            height: 10.0,
+            offset_x: 0.0,
+            offset_y: 0.0,
+        }
+    }
 }
 
 #[derive(Component, Debug, Clone, Copy, PartialEq)]

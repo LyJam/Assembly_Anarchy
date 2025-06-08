@@ -37,6 +37,10 @@ fn main() {
         .insert_resource(LevelWon(false))
         .insert_resource(LevelLost(false))
         .insert_resource(SelectedTool(Tools::Mouse))
+        .insert_resource(Dragging {
+            entity: None,
+            offset_pos: None,
+        })
         .add_observer(on_add_view)
         .add_observer(on_add_output_pipe)
         .add_observer(on_add_input_pipe)
@@ -71,6 +75,9 @@ fn main() {
                 draw_obstacle,
                 remove_escaped_items,
                 level_management,
+                one_to_one_crafter,
+                follow_relative_position,
+                buy_machines,
             ),
         )
         .add_systems(
@@ -79,6 +86,9 @@ fn main() {
                 update_mouse_world_position,
                 update_left_mouse_click_position,
                 update_just_clicked,
+                reset_dragging,
+                update_dragged_object,
+                set_dragging,
             )
                 .chain(),
         )

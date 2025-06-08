@@ -23,3 +23,6 @@ pub use draw::*;
 
 pub mod ui;
 pub use ui::*;
+
+pub mod machines;
+pub use machines::*;

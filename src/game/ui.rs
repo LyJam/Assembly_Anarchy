@@ -1,6 +1,7 @@
 use bevy::color::palettes::basic::*;
 use bevy::sprite::Anchor;
 use bevy::transform;
+use rand::Rng;
 
 use crate::game::*;
 use bevy::winit::cursor::CursorIcon;
@@ -11,6 +12,15 @@ use bevy::{
 
 pub const BUTTON_MOUSE_POS: Vec2 = Vec2::new(-740., 200.);
 pub const BUTTON_DRAW_POS: Vec2 = Vec2::new(-740., 90.);
+
+pub const MACHINE_BUTTON_1: Vec2 = Vec2::new(640.0, 256.0);
+pub const MACHINE_BUTTON_2: Vec2 = Vec2::new(640.0, 182.0);
+pub const MACHINE_BUTTON_3: Vec2 = Vec2::new(640.0, 108.0);
+pub const MACHINE_BUTTON_4: Vec2 = Vec2::new(640.0, 34.0);
+pub const MACHINE_BUTTON_5: Vec2 = Vec2::new(640.0, -40.0);
+
+#[derive(Component)]
+pub struct MachineWindow(Machine);
 
 #[derive(Resource)]
 pub struct SelectedTool(pub Tools);
@@ -118,6 +128,112 @@ pub fn setup_ui(
     ));
 }
 
+pub fn buy_machines(
+    machine_windows: Query<(&MachineWindow, Entity)>,
+    clicked: Res<JustClicked>,
+    mut money: ResMut<CurrentMoney>,
+    mut commands: Commands,
+) {
+    for (window, window_entity) in machine_windows.iter() {
+        if let Some(clicked_entity) = clicked.0 {
+            if (clicked_entity == window_entity) {
+                if (money.0 > window.0.get_cost()) {
+                    // buy machine!
+                    money.0 -= window.0.get_cost();
+                    let mut rng = rand::rng();
+                    let random_spawn_x = rng.random_range(-200.0..200.0);
+                    let random_spawn_y = rng.random_range(-100.0..100.0);
+                    match window.0 {
+                        Machine::OneToOneCrafter {
+                            input,
+                            output,
+                            cost,
+                        } => {
+                            spawn_one_to_one_crafter(
+                                commands.reborrow(),
+                                Position(Vec2 {
+                                    x: random_spawn_x,
+                                    y: random_spawn_y,
+                                }),
+                                window.0,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+pub fn spawn_machine_window(
+    position: Position,
+    machine: Machine,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
+    commands.spawn((
+        position,
+        SpriteView::MachineWindow,
+        MachineWindow(machine),
+        Clickable,
+    ));
+    commands.spawn((
+        Text::new(format!("{}", machine.get_cost())),
+        TextFont {
+            font: asset_server.load("Fonts/CyberpunkCraftpixPixel.otf"),
+            font_size: 40.,
+            ..default()
+        },
+        TextColor(Color::srgb(255.0 / 255.0, 130.0 / 255.0, 130.0 / 255.0)),
+        Node {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(position.0.y + 450.0),
+            left: Val::Px(position.0.x + 800.0 - 70.0),
+            ..default()
+        },
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+    commands.spawn((
+        Text::new(machine.get_name()),
+        TextFont {
+            font: asset_server.load("Fonts/CyberpunkCraftpixPixel.otf"),
+            font_size: 20.,
+            ..default()
+        },
+        TextColor(Color::srgb(211.0 / 255.0, 211.0 / 255.0, 211.0 / 255.0)),
+        Node {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(position.0.y + 425.0),
+            left: Val::Px(position.0.x + 800.0 - 130.0),
+            ..default()
+        },
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+    commands.spawn((
+        Text::new(machine.get_description()),
+        TextFont {
+            font: asset_server.load("Fonts/CyberpunkCraftpixPixel.otf"),
+            font_size: 12.,
+            ..default()
+        },
+        TextColor(Color::srgb(211.0 / 255.0, 211.0 / 255.0, 211.0 / 255.0)),
+        Node {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(position.0.y + 410.0),
+            left: Val::Px(position.0.x + 800.0 - 130.0),
+            ..default()
+        },
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+    let mut sprite = Sprite::from_image(asset_server.load(machine.get_sprite_view().get_sprite()));
+    sprite.custom_size = Some(Vec2::new(64., 64.));
+    commands.spawn((
+        sprite,
+        Transform::from_xyz(position.0.x + 90., position.0.y, 200.0),
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+}
+
 pub fn update_level_text(
     current_level: Res<CurrentLevel>,
     level_list: Res<LevelRegistry>,
@@ -143,6 +259,7 @@ pub fn update_goal_text(
 
 pub fn update_mouse_pointer(
     over_element: Res<OverClickableElement>,
+    dragging: Res<Dragging>,
     mut window: Query<Entity, With<PrimaryWindow>>,
     mut commands: Commands,
 ) {
@@ -155,6 +272,12 @@ pub fn update_mouse_pointer(
             commands
                 .entity(primary_window)
                 .insert((CursorIcon::System(SystemCursorIcon::default())));
+        }
+
+        if (dragging.entity != None) {
+            commands
+                .entity(primary_window)
+                .insert((CursorIcon::System(SystemCursorIcon::Grab)));
         }
     }
 }
