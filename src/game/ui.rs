@@ -16,7 +16,7 @@ pub const BUTTON_MOUSE_POS: Vec2 = Vec2::new(-740., 200.);
 pub const BUTTON_DRAW_POS: Vec2 = Vec2::new(-740., 90.);
 
 pub const MACHINE_BUTTON_1: Vec2 = Vec2::new(640.0, 256.0);
-pub const MACHINE_BUTTON_2: Vec2 = Vec2::new(640.0, 182.0);
+pub const MACHINE_BUTTON_2: Vec2 = Vec2::new(640.0, 118.0);
 pub const MACHINE_BUTTON_3: Vec2 = Vec2::new(640.0, 108.0);
 pub const MACHINE_BUTTON_4: Vec2 = Vec2::new(640.0, 34.0);
 pub const MACHINE_BUTTON_5: Vec2 = Vec2::new(640.0, -40.0);
@@ -181,7 +181,7 @@ pub fn spawn_machine_window(
     position: Position,
     machine: Machine,
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    asset_server: &Res<AssetServer>,
 ) {
     commands.spawn((
         position,

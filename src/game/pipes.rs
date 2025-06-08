@@ -179,7 +179,7 @@ pub fn output_pipe_consume_item(
                     commands.spawn((
                         AudioPlayer(music_handle),
                         PlaybackSettings {
-                            mode: bevy::audio::PlaybackMode::Once,
+                            mode: bevy::audio::PlaybackMode::Despawn,
                             ..default()
                         },
                     ));

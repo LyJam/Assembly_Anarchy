@@ -43,6 +43,18 @@ impl Default for LevelRegistry {
             6u32,
             load_level_6 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
         );
+        map.insert(
+            7u32,
+            load_level_7 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
+        );
+        map.insert(
+            8u32,
+            load_level_8 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
+        );
+        map.insert(
+            9u32,
+            load_level_9 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
+        );
         LevelRegistry(map)
     }
 }
@@ -94,8 +106,14 @@ pub fn level_management(
     if (current_money.0 >= money_goal.0 && !level_won.0 && !level_lost.0) {
         level_won.0 = true;
 
+        let mut complete_text = Text::new("Level Complete!");
+        let mut subtext = Text::new("Press Any Key To Continue");
+        if current_level.0 == (level_registry.0.iter().count() - 1) as u32 {
+            complete_text = Text::new("You won!");
+            subtext = Text::new("please leave a rating :)");
+        }
         commands.spawn((
-            Text::new("Level Complete!"),
+            complete_text,
             TextFont {
                 font: asset_server.load("Fonts/CyberpunkCraftpixPixel.otf"),
                 font_size: 100.,
@@ -123,7 +141,7 @@ pub fn level_management(
             Position(Vec2 { x: 0., y: 0. }),
         ));
         commands.spawn((
-            Text::new("Press Any Key To Continue"),
+            subtext,
             TextFont {
                 font: asset_server.load("Fonts/CyberpunkCraftpixPixel.otf"),
                 font_size: 30.,
@@ -440,7 +458,7 @@ pub fn load_level_3(
             cost: 100,
         },
         commands.reborrow(),
-        asset_server,
+        &asset_server,
     );
 
     commands.spawn((
@@ -500,7 +518,7 @@ pub fn load_level_4(
             cost: 100,
         },
         commands.reborrow(),
-        asset_server,
+        &asset_server,
     );
 
     commands.spawn((
@@ -551,7 +569,7 @@ pub fn load_level_5(
             cost: 200,
         },
         commands.reborrow(),
-        asset_server,
+        &asset_server,
     );
 
     commands.spawn((
@@ -598,7 +616,7 @@ pub fn load_level_6(
         Position(MACHINE_BUTTON_1),
         Machine::Duplicator { cost: 200 },
         commands.reborrow(),
-        asset_server,
+        &asset_server,
     );
 
     commands.spawn((
@@ -612,6 +630,169 @@ pub fn load_level_6(
 
     commands.spawn((
         SpriteView::BackgroundIndustry,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+}
+
+pub fn load_level_7(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 1000;
+    money_goal.0 = 1001;
+
+    setup_mouse_button(commands.reborrow());
+    setup_draw_button(commands.reborrow());
+
+    commands.spawn((
+        SpriteView::InputPipe,
+        Position(INPUT_PIPE_POS3),
+        Clickable,
+        InputPipe {
+            item: Item::Jewelry,
+            spawn_rate: 50.,
+            time_elapsed: 0.,
+            enabled: false,
+            cost: 10,
+        },
+    ));
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_1),
+        Machine::Duplicator { cost: 200 },
+        commands.reborrow(),
+        &asset_server,
+    );
+
+    commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe {
+            item: Item::Jewelry,
+            reward: 3,
+        },
+        Position(OUTPUT_PIPE_POS3),
+    ));
+
+    commands.spawn((
+        SpriteView::BackgroundCity2,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+}
+
+pub fn load_level_8(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 2000;
+    money_goal.0 = 4000;
+
+    setup_mouse_button(commands.reborrow());
+    setup_draw_button(commands.reborrow());
+
+    commands.spawn((
+        SpriteView::InputPipe,
+        Position(INPUT_PIPE_POS3),
+        Clickable,
+        InputPipe {
+            item: Item::Iron,
+            spawn_rate: 25.,
+            time_elapsed: 0.,
+            enabled: false,
+            cost: 20,
+        },
+    ));
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_1),
+        Machine::Duplicator { cost: 200 },
+        commands.reborrow(),
+        &asset_server,
+    );
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_2),
+        Machine::OneToOneCrafter {
+            input: Item::Iron,
+            output: Item::Wrench,
+            cost: 100,
+        },
+        commands.reborrow(),
+        &asset_server,
+    );
+
+    commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe {
+            item: Item::Wrench,
+            reward: 15,
+        },
+        Position(OUTPUT_PIPE_POS3),
+    ));
+
+    commands.spawn((
+        SpriteView::BackgroundIndustry2,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+}
+
+pub fn load_level_9(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 2000;
+    money_goal.0 = 190;
+
+    setup_mouse_button(commands.reborrow());
+    setup_draw_button(commands.reborrow());
+
+    commands.spawn((
+        SpriteView::InputPipe,
+        Position(INPUT_PIPE_POS3),
+        Clickable,
+        InputPipe {
+            item: Item::Gold,
+            spawn_rate: 3.,
+            time_elapsed: 0.,
+            enabled: false,
+            cost: 200,
+        },
+    ));
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_1),
+        Machine::Duplicator { cost: 200 },
+        commands.reborrow(),
+        &asset_server,
+    );
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_2),
+        Machine::OneToOneCrafter {
+            input: Item::Gold,
+            output: Item::Jewelry,
+            cost: 100,
+        },
+        commands.reborrow(),
+        &asset_server,
+    );
+
+    commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe {
+            item: Item::Jewelry,
+            reward: 55,
+        },
+        Position(OUTPUT_PIPE_POS3),
+    ));
+
+    commands.spawn((
+        SpriteView::BackgroundIndustry2,
         Position(Vec2 { x: 0.0, y: 0.0 }),
     ));
 }
