@@ -6,6 +6,7 @@ use bevy::sprite::Anchor;
 pub enum SpriteView {
     InputPipe,
     OutputPipe,
+    CursorPointLeft,
     BackgroundIndustry,
     Item { item: Item, ui_element: bool },
 }
@@ -16,6 +17,7 @@ impl SpriteView {
             SpriteView::InputPipe => "input_pipe.png",
             SpriteView::OutputPipe => "output_pipe.png",
             SpriteView::BackgroundIndustry => "Backgrounds/industry.png",
+            SpriteView::CursorPointLeft => "UI/cursor_point_left.png",
             SpriteView::Item {
                 item,
                 ui_element: _,
@@ -27,6 +29,7 @@ impl SpriteView {
         match self {
             SpriteView::InputPipe => "pipe",
             SpriteView::OutputPipe => "pipe",
+            SpriteView::CursorPointLeft => "pointer",
             SpriteView::BackgroundIndustry => "Background",
             SpriteView::Item {
                 item,
@@ -39,6 +42,7 @@ impl SpriteView {
         match self {
             SpriteView::InputPipe => Vec2::new(150.0, 100.0),
             SpriteView::OutputPipe => Vec2::new(200.0, 200.0),
+            SpriteView::CursorPointLeft => Vec2::new(100.0, 100.0),
             SpriteView::BackgroundIndustry => Vec2::new(1600.0, 900.0),
             SpriteView::Item {
                 item: _,
@@ -57,6 +61,7 @@ impl SpriteView {
         match self {
             SpriteView::InputPipe => 10.,
             SpriteView::OutputPipe => 10.,
+            SpriteView::CursorPointLeft => 10.,
             SpriteView::BackgroundIndustry => -10.,
             SpriteView::Item {
                 item: _,

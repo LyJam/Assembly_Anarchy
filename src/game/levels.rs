@@ -216,4 +216,13 @@ pub fn load_level_1(
         SpriteView::BackgroundIndustry,
         Position(Vec2 { x: 0.0, y: 0.0 }),
     ));
+
+    // user click indicator (mini tutorial)
+    commands.spawn((
+        SpriteView::CursorPointLeft,
+        Position(Vec2 {
+            x: INPUT_PIPE_POS3.x + 125.,
+            y: INPUT_PIPE_POS3.y,
+        }),
+    ));
 }
