@@ -35,7 +35,7 @@ fn main() {
         .insert_resource(CurrentMoney(-1))
         .insert_resource(MoneyGoal(0))
         .insert_resource(LevelWon(false))
-        .add_event::<LevelCompleted>()
+        .insert_resource(LevelLost(false))
         .add_observer(on_add_view)
         .add_observer(on_add_output_pipe)
         .add_observer(on_add_input_pipe)
@@ -68,9 +68,7 @@ fn main() {
                 output_pipe_consume_item,
                 draw_obstacle,
                 remove_escaped_items,
-                load_next_level,
-                simulate_level_completion,
-                level_completion.after(load_next_level),
+                level_management,
             ),
         )
         .add_systems(
