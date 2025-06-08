@@ -9,6 +9,7 @@ pub enum Item {
     Jewelry,
     Iron,
     Wrench,
+    Crystal,
 }
 
 impl fmt::Display for Item {
@@ -26,6 +27,7 @@ impl Item {
             Item::Jewelry => "Items/jewelry.png",
             Item::Iron => "Items/iron.png",
             Item::Wrench => "Items/wrench.png",
+            Item::Crystal => "Items/crystal.png",
         }
     }
 
@@ -37,6 +39,7 @@ impl Item {
             Item::Jewelry => "jewelry",
             Item::Iron => "iron",
             Item::Wrench => "wrench",
+            Item::Crystal => "crystal",
         }
     }
 }

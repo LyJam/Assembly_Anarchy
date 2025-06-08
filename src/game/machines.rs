@@ -9,6 +9,9 @@ pub enum Machine {
         output: Item,
         cost: i32,
     },
+    Duplicator {
+        cost: i32,
+    },
 }
 
 #[derive(Component)]
@@ -25,6 +28,7 @@ impl Machine {
                 output,
                 cost,
             } => format!("crafts {} into {}", input.get_name(), output.get_name()),
+            Machine::Duplicator { cost } => "duplicates input".to_string(),
         }
     }
 
@@ -35,6 +39,7 @@ impl Machine {
                 output,
                 cost,
             } => "Crafter".to_string(),
+            Machine::Duplicator { cost } => "Duplicator".to_string(),
         }
     }
 
@@ -45,6 +50,7 @@ impl Machine {
                 output,
                 cost,
             } => *cost,
+            Machine::Duplicator { cost } => *cost,
         }
     }
 
@@ -55,6 +61,7 @@ impl Machine {
                 output,
                 cost,
             } => SpriteView::OneToOneCrafter,
+            Machine::Duplicator { cost } => SpriteView::Duplicator,
         }
     }
 }
@@ -184,6 +191,99 @@ pub fn one_to_one_crafter(
                                 }),
                             ));
                         }
+                        commands.entity(item_entity).despawn();
+                    }
+                }
+            }
+            _ => (),
+        }
+    }
+}
+
+pub fn spawn_duplicator(mut commands: Commands, position: Position, duplicator: Machine) {
+    match duplicator {
+        Machine::Duplicator { cost } => {
+            let duplicator_width = duplicator.get_sprite_view().get_scale().x;
+            let duplicator_height = duplicator.get_sprite_view().get_scale().y;
+            let physics_colliders = vec![
+                RectanglePhysics {
+                    width: 0.25 * duplicator_width,
+                    height: 0.7 * duplicator_height,
+                    offset_x: -0.25 * duplicator_width,
+                    offset_y: 0.0,
+                },
+                RectanglePhysics {
+                    width: 0.25 * duplicator_width,
+                    height: 0.7 * duplicator_height,
+                    offset_x: 0.25 * duplicator_width,
+                    offset_y: 0.0,
+                },
+            ];
+            commands.spawn((
+                duplicator.get_sprite_view(),
+                position,
+                ColliderCollection(physics_colliders),
+                duplicator,
+                Clickable,
+                DragAble,
+            ));
+        }
+        _ => info!("Wrong machine type given"),
+    }
+}
+
+pub fn duplicator(
+    mut commands: Commands,
+    items: Query<(Entity, &Item, &Position), With<Item>>,
+    duplicator: Query<(&Machine, &Position), Without<Item>>,
+) {
+    for (machine, machine_pos) in duplicator.iter() {
+        match machine {
+            Machine::Duplicator { cost } => {
+                for (item_entity, item, item_pos) in items.iter() {
+                    if (machine_pos.0.distance(item_pos.0)
+                        < 0.5625 * machine.get_sprite_view().get_scale().x / 2.0)
+                    {
+                        // item inside machine
+                        // spawn product
+                        let mut rng = rand::rng();
+                        let random_velocity_x = rng.random_range(-50.0..50.0);
+                        commands.spawn((
+                            SpriteView::Item {
+                                item: item.clone(),
+                                ui_element: false,
+                            },
+                            item.clone(),
+                            Position(Vec2 {
+                                x: machine_pos.0.x - machine.get_sprite_view().get_scale().x * 0.25,
+                                y: machine_pos.0.y
+                                    - machine.get_sprite_view().get_scale().y * 0.6 / 2.0,
+                            }),
+                            CirclePhysics { radius: 14.0 },
+                            Velocity(Vec2 {
+                                x: random_velocity_x,
+                                y: 0.,
+                            }),
+                        ));
+                        let random_velocity_x_2 = rng.random_range(-50.0..50.0);
+
+                        commands.spawn((
+                            SpriteView::Item {
+                                item: item.clone(),
+                                ui_element: false,
+                            },
+                            item.clone(),
+                            Position(Vec2 {
+                                x: machine_pos.0.x + machine.get_sprite_view().get_scale().x * 0.25,
+                                y: machine_pos.0.y
+                                    - machine.get_sprite_view().get_scale().y * 0.6 / 2.0,
+                            }),
+                            CirclePhysics { radius: 14.0 },
+                            Velocity(Vec2 {
+                                x: random_velocity_x_2,
+                                y: 0.,
+                            }),
+                        ));
                         commands.entity(item_entity).despawn();
                     }
                 }

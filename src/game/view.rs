@@ -16,6 +16,7 @@ pub enum SpriteView {
     ButtonDraw,
     ArrowLeft,
     OneToOneCrafter,
+    Duplicator,
     MachineWindow,
     Item { item: Item, ui_element: bool },
 }
@@ -35,6 +36,7 @@ impl SpriteView {
             SpriteView::ButtonDraw => "UI/button_draw.png",
             SpriteView::ArrowLeft => "UI/arrow_left.png",
             SpriteView::OneToOneCrafter => "Machines/1_1_crafter.png",
+            SpriteView::Duplicator => "Machines/duplicator.png",
             SpriteView::MachineWindow => "UI/machine_window_empty.png",
             SpriteView::Item {
                 item,
@@ -57,6 +59,7 @@ impl SpriteView {
             SpriteView::ButtonDraw => "draw",
             SpriteView::ArrowLeft => "arrow",
             SpriteView::OneToOneCrafter => "crafter",
+            SpriteView::Duplicator => "duplicator",
             SpriteView::MachineWindow => "window",
             SpriteView::Item {
                 item,
@@ -79,6 +82,7 @@ impl SpriteView {
             SpriteView::ButtonDraw => Vec2::new(100.0, 100.0),
             SpriteView::ArrowLeft => Vec2::new(70.0, 70.0),
             SpriteView::OneToOneCrafter => Vec2::new(200.0, 200.0),
+            SpriteView::Duplicator => Vec2::new(400.0, 200.0),
             SpriteView::MachineWindow => Vec2::new(320.0, 128.0),
             SpriteView::Item {
                 item: _,
@@ -107,6 +111,7 @@ impl SpriteView {
             SpriteView::ButtonDraw => 100.,
             SpriteView::ArrowLeft => 100.,
             SpriteView::OneToOneCrafter => 9.,
+            SpriteView::Duplicator => 9.1,
             SpriteView::MachineWindow => 100.,
             SpriteView::Item {
                 item: _,

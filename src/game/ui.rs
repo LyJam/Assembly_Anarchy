@@ -1,3 +1,5 @@
+use std::thread::spawn;
+
 use bevy::color::palettes::basic::*;
 use bevy::sprite::Anchor;
 use bevy::transform;
@@ -150,6 +152,16 @@ pub fn buy_machines(
                             cost,
                         } => {
                             spawn_one_to_one_crafter(
+                                commands.reborrow(),
+                                Position(Vec2 {
+                                    x: random_spawn_x,
+                                    y: random_spawn_y,
+                                }),
+                                window.0,
+                            );
+                        }
+                        Machine::Duplicator { cost } => {
+                            spawn_duplicator(
                                 commands.reborrow(),
                                 Position(Vec2 {
                                     x: random_spawn_x,

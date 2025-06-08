@@ -39,6 +39,10 @@ impl Default for LevelRegistry {
             5u32,
             load_level_5 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
         );
+        map.insert(
+            6u32,
+            load_level_6 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
+        );
         LevelRegistry(map)
     }
 }
@@ -561,6 +565,53 @@ pub fn load_level_5(
 
     commands.spawn((
         SpriteView::BackgroundCity2,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+}
+
+pub fn load_level_6(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 1000;
+    money_goal.0 = 2000;
+
+    setup_mouse_button(commands.reborrow());
+    setup_draw_button(commands.reborrow());
+
+    commands.spawn((
+        SpriteView::InputPipe,
+        Position(INPUT_PIPE_POS3),
+        Clickable,
+        InputPipe {
+            item: Item::Crystal,
+            spawn_rate: 30.,
+            time_elapsed: 0.,
+            enabled: false,
+            cost: 10,
+        },
+    ));
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_1),
+        Machine::Duplicator { cost: 200 },
+        commands.reborrow(),
+        asset_server,
+    );
+
+    commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe {
+            item: Item::Crystal,
+            reward: 9,
+        },
+        Position(OUTPUT_PIPE_POS3),
+    ));
+
+    commands.spawn((
+        SpriteView::BackgroundIndustry,
         Position(Vec2 { x: 0.0, y: 0.0 }),
     ));
 }

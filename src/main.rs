@@ -76,6 +76,7 @@ fn main() {
                 remove_escaped_items,
                 level_management,
                 one_to_one_crafter,
+                duplicator,
                 follow_relative_position,
                 buy_machines,
             ),
