@@ -29,12 +29,17 @@ fn main() {
         .insert_resource(MouseWorldPosition(None))
         .insert_resource(LeftMouseClickPosition(None))
         .insert_resource(JustClicked(None))
+        .insert_resource(OverClickableElement(None))
         .insert_resource(LevelRegistry::default())
         .insert_resource(CurrentLevel(0))
+        .insert_resource(CurrentMoney(-1))
+        .insert_resource(MoneyGoal(0))
+        .insert_resource(LevelWon(false))
         .add_event::<LevelCompleted>()
         .add_observer(on_add_view)
         .add_observer(on_add_output_pipe)
-        .add_systems(Startup, (setup_camera, load_initial_level))
+        .add_observer(on_add_input_pipe)
+        .add_systems(Startup, (setup_camera, setup_ui, load_initial_level))
         .add_systems(
             Update,
             (
@@ -49,6 +54,15 @@ fn main() {
         .add_systems(
             Update,
             (
+                update_level_text,
+                update_money_text,
+                update_goal_text,
+                update_mouse_pointer,
+            ),
+        )
+        .add_systems(
+            Update,
+            (
                 toggle_input_pipe,
                 input_pipe_spawn_item,
                 output_pipe_consume_item,
@@ -56,6 +70,7 @@ fn main() {
                 remove_escaped_items,
                 load_next_level,
                 simulate_level_completion,
+                level_completion,
             ),
         )
         .add_systems(

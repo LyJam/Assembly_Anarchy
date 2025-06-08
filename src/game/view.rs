@@ -7,7 +7,7 @@ pub enum SpriteView {
     InputPipe,
     OutputPipe,
     BackgroundIndustry,
-    Item { item: Item },
+    Item { item: Item, ui_element: bool },
 }
 
 impl SpriteView {
@@ -16,7 +16,10 @@ impl SpriteView {
             SpriteView::InputPipe => "input_pipe.png",
             SpriteView::OutputPipe => "output_pipe.png",
             SpriteView::BackgroundIndustry => "Backgrounds/industry.png",
-            SpriteView::Item { item } => item.get_sprite(),
+            SpriteView::Item {
+                item,
+                ui_element: _,
+            } => item.get_sprite(),
         }
     }
 
@@ -25,16 +28,28 @@ impl SpriteView {
             SpriteView::InputPipe => "pipe",
             SpriteView::OutputPipe => "pipe",
             SpriteView::BackgroundIndustry => "Background",
-            SpriteView::Item { item } => item.get_name(),
+            SpriteView::Item {
+                item,
+                ui_element: _,
+            } => item.get_name(),
         }
     }
 
     pub fn get_scale(&self) -> Vec2 {
         match self {
-            SpriteView::InputPipe => Vec2::new(200.0, 200.0),
+            SpriteView::InputPipe => Vec2::new(150.0, 100.0),
             SpriteView::OutputPipe => Vec2::new(200.0, 200.0),
             SpriteView::BackgroundIndustry => Vec2::new(1600.0, 900.0),
-            SpriteView::Item { item: _ } => Vec2::new(32.0, 32.0),
+            SpriteView::Item {
+                item: _,
+                ui_element,
+            } => {
+                if (*ui_element) {
+                    Vec2::new(64.0, 64.0)
+                } else {
+                    Vec2::new(32.0, 32.0)
+                }
+            }
         }
     }
 
@@ -43,7 +58,16 @@ impl SpriteView {
             SpriteView::InputPipe => 10.,
             SpriteView::OutputPipe => 10.,
             SpriteView::BackgroundIndustry => -10.,
-            SpriteView::Item { item: _ } => 0.,
+            SpriteView::Item {
+                item: _,
+                ui_element,
+            } => {
+                if (*ui_element) {
+                    100.
+                } else {
+                    0.
+                }
+            }
         }
     }
 

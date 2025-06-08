@@ -7,7 +7,11 @@ pub fn draw_obstacle(
     mouse_pos: Res<MouseWorldPosition>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    over_element: Res<OverClickableElement>,
 ) {
+    if let Some(_) = over_element.0 {
+        return;
+    }
     if (buttons.pressed(MouseButton::Left)) {
         if let Some(mouse_position) = mouse_pos.0 {
             commands.spawn((

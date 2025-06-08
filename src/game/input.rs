@@ -19,6 +19,9 @@ pub struct Clickable;
 #[derive(Resource)]
 pub struct JustClicked(pub Option<Entity>);
 
+#[derive(Resource)]
+pub struct OverClickableElement(pub Option<Entity>);
+
 pub fn update_mouse_world_position(
     windows: Query<&Window, With<PrimaryWindow>>,
     cameras: Query<(&Camera, &GlobalTransform), With<Camera2d>>,
@@ -54,20 +57,12 @@ pub fn update_just_clicked(
     left_mouse_click_pos: Res<LeftMouseClickPosition>,
     mouse_pos: Res<MouseWorldPosition>,
     mut just_clicked: ResMut<JustClicked>,
+    mut over_element: ResMut<OverClickableElement>,
     views: Query<(Entity, &SpriteView, &Position), With<Clickable>>,
-    mut windows: Query<Entity, With<PrimaryWindow>>,
     mut commands: Commands,
 ) {
-    let Some(mut primary_window) = windows.iter_mut().next() else {
-        return;
-    };
-
-    // re-set default cursor
-    commands
-        .entity(primary_window)
-        .insert((CursorIcon::System(SystemCursorIcon::default())));
-
     just_clicked.0 = None;
+    over_element.0 = None;
 
     let Some(mouse_world_pos) = mouse_pos.0 else {
         return;
@@ -91,13 +86,9 @@ pub fn update_just_clicked(
 
         // Check if the click position is within the bounding box.
         if bounding_box.contains(mouse_world_pos.0) {
-            // set pointer cursor to indicate that this object is clickable
-            commands
-                .entity(primary_window)
-                .insert((CursorIcon::System(SystemCursorIcon::Pointer)));
+            over_element.0 = Some(entity);
             if let Some(click_world_pos) = left_mouse_click_pos.0 {
                 just_clicked.0 = Some(entity);
-                info!("Entity {:?} was just clicked!", entity);
             };
             return; // Exit the function as we found the clicked entity.
         }
