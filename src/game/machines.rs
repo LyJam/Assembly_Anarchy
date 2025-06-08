@@ -128,7 +128,7 @@ pub fn spawn_one_to_one_crafter(mut commands: Commands, position: Position, craf
             ));
             commands.spawn((
                 SpriteView::Item {
-                    item: input.clone(),
+                    item: output.clone(),
                     ui_element: true,
                 },
                 Position(Vec2 { x: 0.0, y: 0.0 }),

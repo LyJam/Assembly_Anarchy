@@ -11,11 +11,34 @@ pub fn draw_obstacle(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     over_element: Res<OverClickableElement>,
+    dragging: Res<Dragging>,
     tool_selected: Res<SelectedTool>,
     mut draw_indicator: Query<(&mut Transform), With<DrawIndicator>>,
 ) {
     if (tool_selected.0 == Tools::Draw) {
         if let Some(_) = over_element.0 {
+            // move indicator off screen
+            if let mut transform = draw_indicator.single_mut() {
+                *transform = Transform::from_translation(Vec3 {
+                    x: 10000.,
+                    y: 10000.,
+                    z: -1000.,
+                })
+                .with_scale(Vec3::splat(24.));
+            }
+            // don't draw over non-clickable elements
+            return;
+        }
+        if (dragging.entity != None) {
+            // move indicator off screen
+            if let mut transform = draw_indicator.single_mut() {
+                *transform = Transform::from_translation(Vec3 {
+                    x: 10000.,
+                    y: 10000.,
+                    z: -1000.,
+                })
+                .with_scale(Vec3::splat(24.));
+            }
             // don't draw over non-clickable elements
             return;
         }

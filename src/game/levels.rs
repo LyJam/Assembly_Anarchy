@@ -27,6 +27,18 @@ impl Default for LevelRegistry {
             2u32,
             load_level_2 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
         );
+        map.insert(
+            3u32,
+            load_level_3 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
+        );
+        map.insert(
+            4u32,
+            load_level_4 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
+        );
+        map.insert(
+            5u32,
+            load_level_5 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
+        );
         LevelRegistry(map)
     }
 }
@@ -388,5 +400,167 @@ pub fn load_level_2(
             x: BUTTON_DRAW_POS.x + 100.,
             y: BUTTON_DRAW_POS.y,
         }),
+    ));
+}
+
+pub fn load_level_3(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 200;
+    money_goal.0 = 300;
+
+    setup_mouse_button(commands.reborrow());
+    setup_draw_button(commands.reborrow());
+
+    commands.spawn((
+        SpriteView::InputPipe,
+        Position(INPUT_PIPE_POS3),
+        Clickable,
+        InputPipe {
+            item: Item::Steel,
+            spawn_rate: 5.,
+            time_elapsed: 0.,
+            enabled: false,
+            cost: 2,
+        },
+    ));
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_1),
+        Machine::OneToOneCrafter {
+            input: Item::Steel,
+            output: Item::Bolt,
+            cost: 100,
+        },
+        commands.reborrow(),
+        asset_server,
+    );
+
+    commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe {
+            item: Item::Bolt,
+            reward: 10,
+        },
+        Position(OUTPUT_PIPE_POS3),
+    ));
+
+    commands.spawn((
+        SpriteView::BackgroundIndustry,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+
+    // user click indicator (mini tutorial)
+    commands.spawn((
+        SpriteView::CursorPointRight,
+        Position(Vec2 {
+            x: MACHINE_BUTTON_1.x + -210.,
+            y: MACHINE_BUTTON_1.y,
+        }),
+    ));
+}
+
+pub fn load_level_4(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 200;
+    money_goal.0 = 300;
+
+    setup_mouse_button(commands.reborrow());
+    setup_draw_button(commands.reborrow());
+
+    commands.spawn((
+        SpriteView::InputPipe,
+        Position(INPUT_PIPE_POS4),
+        Clickable,
+        InputPipe {
+            item: Item::Iron,
+            spawn_rate: 15.,
+            time_elapsed: 0.,
+            enabled: false,
+            cost: 2,
+        },
+    ));
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_1),
+        Machine::OneToOneCrafter {
+            input: Item::Iron,
+            output: Item::Wrench,
+            cost: 100,
+        },
+        commands.reborrow(),
+        asset_server,
+    );
+
+    commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe {
+            item: Item::Wrench,
+            reward: 10,
+        },
+        Position(OUTPUT_PIPE_POS1),
+    ));
+
+    commands.spawn((
+        SpriteView::BackgroundCity,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+}
+
+pub fn load_level_5(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 5000;
+    money_goal.0 = 5500;
+
+    setup_mouse_button(commands.reborrow());
+    setup_draw_button(commands.reborrow());
+
+    commands.spawn((
+        SpriteView::InputPipe,
+        Position(INPUT_PIPE_POS2),
+        Clickable,
+        InputPipe {
+            item: Item::Gold,
+            spawn_rate: 3.,
+            time_elapsed: 0.,
+            enabled: false,
+            cost: 200,
+        },
+    ));
+
+    spawn_machine_window(
+        Position(MACHINE_BUTTON_1),
+        Machine::OneToOneCrafter {
+            input: Item::Gold,
+            output: Item::Jewelry,
+            cost: 200,
+        },
+        commands.reborrow(),
+        asset_server,
+    );
+
+    commands.spawn((
+        SpriteView::OutputPipe,
+        OutputPipe {
+            item: Item::Jewelry,
+            reward: 250,
+        },
+        Position(OUTPUT_PIPE_POS3),
+    ));
+
+    commands.spawn((
+        SpriteView::BackgroundCity2,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
     ));
 }
