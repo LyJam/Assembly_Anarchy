@@ -36,6 +36,7 @@ fn main() {
         .insert_resource(MoneyGoal(0))
         .insert_resource(LevelWon(false))
         .insert_resource(LevelLost(false))
+        .insert_resource(SelectedTool(Tools::Mouse))
         .add_observer(on_add_view)
         .add_observer(on_add_output_pipe)
         .add_observer(on_add_input_pipe)
@@ -58,6 +59,7 @@ fn main() {
                 update_money_text,
                 update_goal_text,
                 update_mouse_pointer,
+                tool_selection,
             ),
         )
         .add_systems(

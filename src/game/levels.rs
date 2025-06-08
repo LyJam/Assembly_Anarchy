@@ -69,6 +69,7 @@ pub fn level_management(
     mut current_level: ResMut<CurrentLevel>,
     level_registry: Res<LevelRegistry>,
     level_entities_query: Query<Entity, With<Position>>, // Query needed for de-spawn
+    mut selected_tool: ResMut<SelectedTool>,
 ) {
     if (current_money.0 >= money_goal.0 && !level_won.0 && !level_lost.0) {
         level_won.0 = true;
@@ -194,6 +195,7 @@ pub fn level_management(
             level_lost.0 = false;
             current_money.0 = 123;
             money_goal.0 = 1234;
+            selected_tool.0 = Tools::Mouse;
 
             // Despawn all entities from the current level
             for entity in level_entities_query.iter() {

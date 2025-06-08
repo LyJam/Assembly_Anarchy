@@ -10,6 +10,9 @@ pub enum SpriteView {
     BackgroundIndustry,
     BackgroundIndustry2,
     BackgroundCity,
+    ButtonMouse,
+    ButtonDraw,
+    ArrowLeft,
     Item { item: Item, ui_element: bool },
 }
 
@@ -22,6 +25,9 @@ impl SpriteView {
             SpriteView::BackgroundIndustry2 => "Backgrounds/industry2.png",
             SpriteView::BackgroundCity => "Backgrounds/city.png",
             SpriteView::CursorPointLeft => "UI/cursor_point_left.png",
+            SpriteView::ButtonMouse => "UI/button_mouse.png",
+            SpriteView::ButtonDraw => "UI/button_draw.png",
+            SpriteView::ArrowLeft => "UI/arrow_left.png",
             SpriteView::Item {
                 item,
                 ui_element: _,
@@ -37,6 +43,9 @@ impl SpriteView {
             SpriteView::BackgroundIndustry => "Background",
             SpriteView::BackgroundIndustry2 => "Background",
             SpriteView::BackgroundCity => "Background",
+            SpriteView::ButtonMouse => "mouse",
+            SpriteView::ButtonDraw => "draw",
+            SpriteView::ArrowLeft => "arrow",
             SpriteView::Item {
                 item,
                 ui_element: _,
@@ -52,6 +61,9 @@ impl SpriteView {
             SpriteView::BackgroundIndustry => Vec2::new(1600.0, 900.0),
             SpriteView::BackgroundIndustry2 => Vec2::new(1600.0, 900.0),
             SpriteView::BackgroundCity => Vec2::new(1600.0, 900.0),
+            SpriteView::ButtonMouse => Vec2::new(100.0, 100.0),
+            SpriteView::ButtonDraw => Vec2::new(100.0, 100.0),
+            SpriteView::ArrowLeft => Vec2::new(70.0, 70.0),
             SpriteView::Item {
                 item: _,
                 ui_element,
@@ -73,6 +85,9 @@ impl SpriteView {
             SpriteView::BackgroundIndustry => -10.,
             SpriteView::BackgroundIndustry2 => -10.,
             SpriteView::BackgroundCity => -10.,
+            SpriteView::ButtonMouse => 100.,
+            SpriteView::ButtonDraw => 100.,
+            SpriteView::ArrowLeft => 100.,
             SpriteView::Item {
                 item: _,
                 ui_element,
