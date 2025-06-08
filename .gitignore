@@ -2,3 +2,5 @@
 *.zip
 web/Assembly_Anarchy.js
 web/Assembly_Anarchy_bg.wasm
+/web/assets
+web-commands.txt
