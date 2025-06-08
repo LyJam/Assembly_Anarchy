@@ -8,7 +8,7 @@ pub struct CurrentLevel(pub u32);
 // A resource that holds a map of level numbers to their spawn functions.
 #[derive(Resource)]
 pub struct LevelRegistry(
-    pub HashMap<u32, fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>) -> ()>,
+    pub HashMap<u32, fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>) -> ()>,
 ); // A map from level number to a spawn function
 
 impl Default for LevelRegistry {
@@ -17,11 +17,11 @@ impl Default for LevelRegistry {
         // Register your level spawn functions here:
         map.insert(
             0u32,
-            load_level_1 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>),
+            load_level_0 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
         );
         map.insert(
             1u32,
-            load_level_1 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>),
+            load_level_1 as fn(Commands, ResMut<CurrentMoney>, ResMut<MoneyGoal>, Res<AssetServer>),
         );
         LevelRegistry(map)
     }
@@ -37,6 +37,9 @@ pub struct MoneyGoal(pub i32);
 #[derive(Resource)]
 pub struct LevelWon(pub bool);
 
+#[derive(Component)]
+pub struct LevelZeroMarker;
+
 /// Event triggered when the current level is completed.
 #[derive(Event)]
 pub struct LevelCompleted;
@@ -47,9 +50,10 @@ pub fn load_initial_level(
     current_level: Res<CurrentLevel>,
     mut money: ResMut<CurrentMoney>,
     mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
 ) {
     if let Some(spawn_fn) = level_registry.0.get(&current_level.0) {
-        spawn_fn(commands, money, money_goal);
+        spawn_fn(commands, money, money_goal, asset_server);
     } else {
         error!(
             "No spawn function registered for initial level {}",
@@ -66,6 +70,7 @@ pub fn load_next_level(
     level_entities_query: Query<Entity, With<Position>>, // Query needed for de-spawn
     mut money: ResMut<CurrentMoney>,
     mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
 ) {
     // Only proceed if a LevelCompleted event occurred
     if level_completed_events.is_empty() {
@@ -87,7 +92,7 @@ pub fn load_next_level(
     // Check if the next level exists in the registry
     if let Some(spawn_fn) = level_registry.0.get(&current_level.0) {
         info!("Loading Level: {}", current_level.0);
-        spawn_fn(commands, money, money_goal); // Call the spawn function for the new level
+        spawn_fn(commands, money, money_goal, asset_server); // Call the spawn function for the new level
     } else {
         // No more levels defined, handle "Game Over" or loop back to level 0
         info!(
@@ -105,6 +110,7 @@ pub fn level_completion(
     asset_server: Res<AssetServer>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut level_completed_writer: EventWriter<LevelCompleted>,
+    level_zero: Query<Entity, With<LevelZeroMarker>>,
 ) {
     if (current_money.0 >= money_goal.0 && !level_won.0) {
         level_won.0 = true;
@@ -161,6 +167,10 @@ pub fn level_completion(
         ));
     }
 
+    for (_) in level_zero.iter() {
+        level_won.0 = true;
+    }
+
     if (level_won.0) {
         if (keyboard_input.get_pressed().count() > 0) {
             level_won.0 = false;
@@ -182,10 +192,88 @@ pub fn simulate_level_completion(
     }
 }
 
+pub fn load_level_0(
+    mut commands: Commands,
+    mut money: ResMut<CurrentMoney>,
+    mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
+) {
+    money.0 = 123;
+    money_goal.0 = 1234;
+
+    commands.spawn((
+        SpriteView::BackgroundCity,
+        Position(Vec2 { x: 0.0, y: 0.0 }),
+    ));
+
+    commands.spawn((LevelZeroMarker, Position(Vec2 { x: 0., y: 0. })));
+
+    /* explainer level */
+    commands.spawn((
+        Text::new("Assembly Anarchy"),
+        TextFont {
+            font: asset_server.load("Fonts/CyberpunkCraftpixPixel.otf"),
+            font_size: 100.,
+            ..default()
+        },
+        TextColor(Color::srgb(255.0 / 255.0, 215.0 / 255.0, 0.0)),
+        TextLayout::new_with_justify(JustifyText::Center),
+        BoxShadow {
+            x_offset: Val::Percent(0.),
+            y_offset: Val::Percent(0.),
+            blur_radius: Val::Percent(2.),
+            ..Default::default()
+        },
+        Node {
+            margin: UiRect {
+                top: Val::Percent(20.0),
+                ..Default::default()
+            },
+            width: Val::Percent(100.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            position_type: PositionType::Absolute,
+            ..default()
+        },
+        Position(Vec2 { x: 0., y: 0. }),
+    ));
+
+    commands.spawn((
+        Text::new("Assemble the correct items from the given inputs to earn money \n Good luck and have fun! \n\n press any key to continue..."),
+        TextFont {
+            font: asset_server.load("Fonts/CyberpunkCraftpixPixel.otf"),
+            font_size: 30.,
+            ..default()
+        },
+        TextColor(Color::srgb(211.0 / 255.0, 211.0 / 255.0, 211.0 / 255.0)),
+        TextLayout::new_with_justify(JustifyText::Center),
+        BoxShadow {
+            x_offset: Val::Percent(0.),
+            y_offset: Val::Percent(0.),
+            blur_radius: Val::Percent(5.),
+            spread_radius: Val::Percent(100.),
+            ..Default::default()
+        },
+        Node {
+            margin: UiRect {
+                top: Val::Percent(30.0),
+                ..Default::default()
+            },
+            width: Val::Percent(100.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            position_type: PositionType::Absolute,
+            ..default()
+        },
+        Position(Vec2 { x: 0., y: 0. }),
+    ));
+}
+
 pub fn load_level_1(
     mut commands: Commands,
     mut money: ResMut<CurrentMoney>,
     mut money_goal: ResMut<MoneyGoal>,
+    asset_server: Res<AssetServer>,
 ) {
     money.0 = 100;
     money_goal.0 = 120;

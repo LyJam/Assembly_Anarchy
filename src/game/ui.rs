@@ -80,9 +80,8 @@ pub fn update_level_text(
     level_list: Res<LevelRegistry>,
     mut level_text: Query<&mut Text, With<LevelText>>,
 ) {
-    let level_nr = current_level.0 + 1;
     let total_levels = level_list.0.iter().count();
-    level_text.single_mut().0 = format!("Level: {:?}/{:?}", level_nr, total_levels);
+    level_text.single_mut().0 = format!("Level: {:?}/{:?}", current_level.0, total_levels);
 }
 
 pub fn update_money_text(

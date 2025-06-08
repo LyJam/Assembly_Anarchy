@@ -8,6 +8,8 @@ pub enum SpriteView {
     OutputPipe,
     CursorPointLeft,
     BackgroundIndustry,
+    BackgroundIndustry2,
+    BackgroundCity,
     Item { item: Item, ui_element: bool },
 }
 
@@ -17,6 +19,8 @@ impl SpriteView {
             SpriteView::InputPipe => "input_pipe.png",
             SpriteView::OutputPipe => "output_pipe.png",
             SpriteView::BackgroundIndustry => "Backgrounds/industry.png",
+            SpriteView::BackgroundIndustry2 => "Backgrounds/industry2.png",
+            SpriteView::BackgroundCity => "Backgrounds/city.png",
             SpriteView::CursorPointLeft => "UI/cursor_point_left.png",
             SpriteView::Item {
                 item,
@@ -31,6 +35,8 @@ impl SpriteView {
             SpriteView::OutputPipe => "pipe",
             SpriteView::CursorPointLeft => "pointer",
             SpriteView::BackgroundIndustry => "Background",
+            SpriteView::BackgroundIndustry2 => "Background",
+            SpriteView::BackgroundCity => "Background",
             SpriteView::Item {
                 item,
                 ui_element: _,
@@ -44,6 +50,8 @@ impl SpriteView {
             SpriteView::OutputPipe => Vec2::new(200.0, 200.0),
             SpriteView::CursorPointLeft => Vec2::new(100.0, 100.0),
             SpriteView::BackgroundIndustry => Vec2::new(1600.0, 900.0),
+            SpriteView::BackgroundIndustry2 => Vec2::new(1600.0, 900.0),
+            SpriteView::BackgroundCity => Vec2::new(1600.0, 900.0),
             SpriteView::Item {
                 item: _,
                 ui_element,
@@ -63,6 +71,8 @@ impl SpriteView {
             SpriteView::OutputPipe => 10.,
             SpriteView::CursorPointLeft => 10.,
             SpriteView::BackgroundIndustry => -10.,
+            SpriteView::BackgroundIndustry2 => -10.,
+            SpriteView::BackgroundCity => -10.,
             SpriteView::Item {
                 item: _,
                 ui_element,

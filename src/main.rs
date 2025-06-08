@@ -70,7 +70,7 @@ fn main() {
                 remove_escaped_items,
                 load_next_level,
                 simulate_level_completion,
-                level_completion,
+                level_completion.after(load_next_level),
             ),
         )
         .add_systems(
