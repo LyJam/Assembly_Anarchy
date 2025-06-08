@@ -1,5 +1,7 @@
 use bevy::asset::AssetMetaCheck;
-use bevy::prelude::*;
+use bevy::audio::PlaybackSettings;
+use bevy::audio::Volume;
+use bevy::prelude::*; // Import PlaybackSettings
 
 mod game;
 use game::*;
@@ -44,7 +46,10 @@ fn main() {
         .add_observer(on_add_view)
         .add_observer(on_add_output_pipe)
         .add_observer(on_add_input_pipe)
-        .add_systems(Startup, (setup_camera, setup_ui, load_initial_level))
+        .add_systems(
+            Startup,
+            (setup_camera, setup_music, setup_ui, load_initial_level),
+        )
         .add_systems(
             Update,
             (
@@ -98,4 +103,17 @@ fn main() {
 
 fn setup_camera(mut commands: Commands) {
     commands.spawn((Camera2d));
+}
+
+fn setup_music(asset_server: Res<AssetServer>, mut commands: Commands) {
+    let music_handle = asset_server.load::<AudioSource>("Music/signal-fade.ogg");
+
+    // Spawn an entity to play the music
+    commands.spawn((
+        AudioPlayer(music_handle),
+        PlaybackSettings {
+            mode: bevy::audio::PlaybackMode::Loop,
+            ..default()
+        },
+    ));
 }

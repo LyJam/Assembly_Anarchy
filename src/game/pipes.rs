@@ -159,6 +159,7 @@ pub fn output_pipe_consume_item(
     items: Query<(Entity, &Item, &Position)>,
     pipes: Query<(&OutputPipe, &Position, &SpriteView)>,
     mut money: ResMut<CurrentMoney>,
+    asset_server: Res<AssetServer>,
 ) {
     for (pipe, pipe_pos, pipe_view) in pipes.iter() {
         let half_diameter = pipe_view.get_scale().y / 2.0;
@@ -172,6 +173,16 @@ pub fn output_pipe_consume_item(
                 if (*item == pipe.item) {
                     money.0 += pipe.reward;
                     commands.entity(item_entity).despawn();
+                    let music_handle = asset_server.load::<AudioSource>("Music/coin.ogg");
+
+                    // Spawn an entity to play the music
+                    commands.spawn((
+                        AudioPlayer(music_handle),
+                        PlaybackSettings {
+                            mode: bevy::audio::PlaybackMode::Once,
+                            ..default()
+                        },
+                    ));
                 }
             }
         }
